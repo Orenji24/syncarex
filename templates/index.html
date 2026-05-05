@@ -40,8 +40,8 @@
                 <div class="control-panel">
                     <h2>Controls</h2>
 
-                    <label for="epochs">Epochs <output id="epochsValue">300</output></label>
-                    <input id="epochs" type="range" name="epochs" min="100" max="1000" step="100" value="300">
+                    <label for="epochs">Epochs <output id="epochsValue">100</output></label>
+                    <input id="epochs" type="range" name="epochs" min="100" max="1000" step="100" value="100">
 
                     <label for="noise_level">Noise level <output id="noiseValue">0.5</output></label>
                     <input id="noise_level" type="range" name="noise_level" min="0" max="1" step="0.1" value="0.5">
@@ -54,6 +54,7 @@
                 </div>
                 <button type="submit">Generate Synthetic Data</button>
                 <p class="hint">Expected columns can include age, BP/blood pressure, cholesterol, diagnosis, outcome, or any tabular EHR fields.</p>
+                <p class="hint">For a quick examiner demo, keep epochs at 100. Increase epochs later when you want a slower, higher-effort generation run.</p>
             </form>
 
             <div class="feature-panel">
@@ -76,10 +77,43 @@
                 <h2>Fresh Every Run</h2>
                 <p>Each upload creates unique graph and CSV files so browser caching does not hide new results.</p>
             </article>
-            <article>
-                <h2>Project Ready</h2>
-                <p>The app separates generation, privacy notes, methodology, results, and downloads.</p>
-            </article>
+        </section>
+
+        <section class="examiner-section">
+            <div class="section-kicker">Examiner overview</div>
+            <h2>Methodology and privacy in one view</h2>
+            <div class="examiner-grid">
+                <article>
+                    <span>01</span>
+                    <h3>Upload and schema detection</h3>
+                    <p>The system accepts structured healthcare CSV files and automatically detects numeric and categorical columns using SDV metadata.</p>
+                </article>
+                <article>
+                    <span>02</span>
+                    <h3>Generative model</h3>
+                    <p>CTGAN learns the statistical structure of the table and samples new synthetic records for research and model prototyping.</p>
+                </article>
+                <article>
+                    <span>03</span>
+                    <h3>Medical constraints</h3>
+                    <p>Age, blood pressure, and cholesterol are bounded row-by-row. Gender and medication are preserved exactly when those columns exist.</p>
+                </article>
+                <article>
+                    <span>04</span>
+                    <h3>Privacy layer</h3>
+                    <p>The dashboard reports epsilon, privacy level, exact-match risk, duplicate rate, and explains that lower epsilon means stronger privacy.</p>
+                </article>
+                <article>
+                    <span>05</span>
+                    <h3>Quality evaluation</h3>
+                    <p>KL divergence, KS score, correlation similarity, heatmaps, and real-vs-synthetic profile graphs show how closely patterns are preserved.</p>
+                </article>
+                <article>
+                    <span>06</span>
+                    <h3>Research output</h3>
+                    <p>The app generates a downloadable synthetic CSV, dashboard metrics, medical checks, and a research report suitable for project explanation.</p>
+                </article>
+            </div>
         </section>
     </main>
     <script>
