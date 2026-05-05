@@ -62,7 +62,7 @@ def generate():
     file.save(input_path)
 
     try:
-        epochs = int(request.form.get("epochs", 300))
+        epochs = int(request.form.get("epochs", 100))
         sample_size_raw = request.form.get("sample_size", "").strip()
         sample_size = int(sample_size_raw) if sample_size_raw else None
         noise_level = float(request.form.get("noise_level", 0.5))
@@ -101,17 +101,77 @@ def research_report(run_id):
 def assistant():
     payload = request.get_json(silent=True) or {}
     question = payload.get("question", "").lower()
+    result = RUN_RESULTS.get(payload.get("run_id", ""))
+    quality = result.get("quality_metrics", {}) if result else {}
+    summary = result.get("summary", {}) if result else {}
+    privacy_level = result.get("privacy_level", "N/A") if result else "N/A"
+    epsilon = result.get("epsilon", "N/A") if result else "N/A"
+    medical_checks = result.get("medical_checks", []) if result else []
+
+    def metric(name, fallback="N/A"):
+        return quality.get(name, fallback)
+
+    def medical_summary():
+        if not medical_checks:
+            return "No medical consistency checks were available for this dataset."
+        passed = sum(1 for check in medical_checks if check.get("status") in {"Pass", "Checked"})
+        return f"{passed}/{len(medical_checks)} medical consistency checks passed or were successfully checked."
 
     if "reliable" in question or "trust" in question:
-        answer = "Reliability depends on the dashboard: high correlation similarity, low KL/KS scores, low duplicate rate, and passing medical checks are good signs. It is still synthetic and should be validated before research use."
+        answer = (
+            "Yes, this synthetic dataset is designed for research use, especially for exploratory analysis, "
+            "prototype model training, teaching, and privacy-conscious data sharing. For this run, the dashboard reports "
+            f"correlation similarity = {metric('correlation_similarity')}, KL divergence = {metric('kl_divergence')}, "
+            f"KS score = {metric('ks_score')}, duplicate rate = {metric('duplicate_rate')}, and {medical_summary()} "
+            "That means you should judge it as research-ready when those values are acceptable for your study objective. "
+            "For clinical deployment or publication-grade claims, include these metrics in the methodology section."
+        )
+    elif "research" in question or "study" in question:
+        answer = (
+            "Use this synthetic data for research workflows where patient-level privacy matters: feasibility studies, "
+            "model prototyping, statistical comparison, classroom demos, and sharing non-identifiable examples. "
+            f"This run contains {summary.get('rows_uploaded', 'N/A')} uploaded rows, "
+            f"{summary.get('columns_detected', 'N/A')} columns, and a simulated epsilon of {epsilon} "
+            f"with privacy level {privacy_level}."
+        )
     elif "age" in question and ("clip" in question or "clipped" in question or "bounded" in question):
-        answer = "Age is bounded row-by-row so every synthetic age stays within the requested +/- 5 range from its matching original row. That keeps values close without copying the exact original."
+        answer = (
+            "Age is bounded row-by-row, so each synthetic age stays within +/- 5 of the matching original row. "
+            "This keeps the synthetic record medically plausible while avoiding exact copying. The same idea is used for BP and cholesterol with their requested margins."
+        )
+    elif "bp" in question or "blood pressure" in question or "cholesterol" in question or "cholestrol" in question:
+        answer = (
+            "The generator applies row-level medical bounds after synthesis: age within +/- 5, blood pressure within +/- 10, "
+            "and cholesterol within +/- 20 of the corresponding original row. Check the Clinical Margin Audit to confirm the maximum observed difference."
+        )
     elif "epsilon" in question or "privacy" in question:
-        answer = "Lower epsilon means stronger privacy but usually less similarity to the real dataset. In this prototype epsilon is simulated for the dashboard; formal DP needs DP-SGD or another privacy-accounted training method."
+        answer = (
+            f"This run uses epsilon = {epsilon}, giving a privacy level of {privacy_level}. "
+            "Lower epsilon means stronger privacy and usually less similarity to the original data. "
+            "In the current prototype epsilon is simulated from the control slider; for a formal DP guarantee, the next upgrade is DP-SGD or another privacy-accounted training method."
+        )
     elif "kl" in question or "ks" in question:
-        answer = "KL divergence and KS score compare real and synthetic distributions. Lower values usually mean the synthetic distribution is closer to the original."
+        answer = (
+            f"For this run, KL divergence is {metric('kl_divergence')} and the KS score is {metric('ks_score')}. "
+            "KL divergence measures distribution difference, while KS checks the maximum gap between real and synthetic cumulative distributions. Lower values indicate closer statistical behavior."
+        )
+    elif "duplicate" in question or "copy" in question or "same" in question:
+        answer = (
+            f"The synthetic duplicate rate is {metric('duplicate_rate')}. A low duplicate rate is important because it means the generator is less likely to repeat records. "
+            "The privacy risk card also checks exact row matches between real and synthetic data."
+        )
+    elif "correlation" in question or "relationship" in question:
+        answer = (
+            f"The correlation similarity score for this run is {metric('correlation_similarity')}. "
+            "A higher score means relationships between numeric columns were better preserved. Use the heatmap toggle to inspect which relationships changed."
+        )
+    elif "medical" in question or "glucose" in question or "disease" in question or "diagnosis" in question:
+        details = " ".join(f"{check.get('name')}: {check.get('status')} - {check.get('detail')}" for check in medical_checks)
+        answer = details or "No medical consistency checks were triggered because the expected medical columns were not detected."
     else:
-        answer = "Check the summary, quality metrics, privacy panel, clinical margin audit, and medical consistency checks together. No single metric is enough on its own."
+        answer = (
+            "I can help interpret this run for research use. Ask about reliability, epsilon/privacy, KL or KS scores, duplicate rate, correlations, medical checks, or why age/BP/cholesterol are bounded."
+        )
 
     return jsonify({"answer": answer})
 
@@ -126,4 +186,7 @@ def download(filename):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, use_reloader=True)
+    debug = os.environ.get("FLASK_DEBUG", "0") == "1"
+    host = os.environ.get("HOST", "127.0.0.1")
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host=host, port=port, debug=debug, use_reloader=debug)
