@@ -1,4 +1,6 @@
-# Privacy-Preserving Synthetic Healthcare Data Generator
+# SynCareX
+
+## Privacy-Preserving Synthetic Healthcare Data Generator
 
 A Flask web app that generates synthetic healthcare CSV data, applies clinical consistency rules, and shows a real-vs-synthetic evaluation dashboard.
 
@@ -70,6 +72,24 @@ python app.py
 ## Deployment Notes
 
 This is a Flask/Python project, so it cannot run directly on GitHub Pages. GitHub Pages only supports static websites.
+
+If you want a polished GitHub Pages project website, this repo includes a static site in:
+
+```text
+docs/
+```
+
+To enable it on GitHub:
+
+1. Open your repository on GitHub.
+2. Go to `Settings`.
+3. Go to `Pages`.
+4. Under `Build and deployment`, select `Deploy from a branch`.
+5. Select your branch, usually `main`.
+6. Select the `/docs` folder.
+7. Save.
+
+That will show the project website. The actual generator still needs Flask hosting.
 
 Use one of these for live hosting:
 
