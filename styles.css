@@ -5,7 +5,6 @@
     --line: rgba(148, 163, 184, 0.22);
     --panel: rgba(15, 23, 42, 0.84);
     --accent: #22d3ee;
-    --accent-2: #60a5fa;
 }
 
 * {
@@ -41,11 +40,11 @@ body {
     backdrop-filter: blur(18px);
 }
 
-.nav div {
+.nav div,
+.hero-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    justify-content: flex-end;
+    gap: 10px;
 }
 
 a {
@@ -116,13 +115,6 @@ article p,
     font-size: 1.12rem;
 }
 
-.hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 26px;
-}
-
 .primary,
 .secondary {
     display: inline-flex;
@@ -153,18 +145,27 @@ article p,
     grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .metrics div,
 article,
 .steps div,
-.section,
-.run-card {
+.section {
     border: 1px solid var(--line);
     border-radius: 8px;
     background: var(--panel);
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
 }
 
-.metrics div {
+.metrics div,
+article,
+.steps div {
     padding: 18px;
 }
 
@@ -191,26 +192,10 @@ article,
     margin-bottom: 18px;
 }
 
-.grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-article {
-    padding: 18px;
-}
-
 .split {
     display: grid;
     grid-template-columns: 320px minmax(0, 1fr);
     gap: 24px;
-}
-
-.steps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.steps div {
-    padding: 18px;
 }
 
 pre {
