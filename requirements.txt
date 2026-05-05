@@ -1,7 +1,7 @@
 flask
+gunicorn
 pandas
 numpy
-matplotlib
 scikit-learn
 scipy
 sdv
