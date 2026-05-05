@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synthetic Data Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+    <main class="shell">
+        <nav class="site-nav">
+            <a class="brand" href="/">SynCare Lab</a>
+            <div>
+                <a href="/methodology">Methodology</a>
+                <a href="/privacy">Privacy</a>
+                <a href="/guide">Guide</a>
+                <a href="{{ report_url }}">Generate Research Report</a>
+                <a class="download" href="{{ download_url }}">Download CSV</a>
+            </div>
+        </nav>
+
+        <section class="results-hero">
+            <div>
+                <p class="eyebrow">Generation complete</p>
+                <h1>Real vs Synthetic Report</h1>
+            </div>
+            <div class="metrics">
+                <div><span>Rows uploaded</span><strong>{{ summary.rows_uploaded }}</strong></div>
+                <div><span>Columns detected</span><strong>{{ summary.columns_detected }}</strong></div>
+                <div><span>Privacy level</span><strong>{{ privacy_level }}</strong></div>
+                <div><span>Epsilon</span><strong>{{ epsilon }}</strong></div>
+            </div>
+        </section>
+
+        <section class="dashboard-grid">
+            <div class="panel">
+                <h2>Dataset Summary</h2>
+                <div class="mini-metrics">
+                    <div><span>Numeric</span><strong>{{ summary.numeric_columns }}</strong></div>
+                    <div><span>Categorical</span><strong>{{ summary.categorical_columns }}</strong></div>
+                    <div><span>Missing values</span><strong>{{ summary.missing_values_pct }}%</strong></div>
+                    <div><span>Sample size</span><strong>{{ sample_size }}</strong></div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Data Quality Metrics</h2>
+                <div class="mini-metrics">
+                    <div><span>KL Divergence</span><strong>{{ quality_metrics.kl_divergence }}</strong></div>
+                    <div><span>KS Test</span><strong>{{ quality_metrics.ks_score }}</strong></div>
+                    <div><span>Correlation similarity</span><strong>{{ quality_metrics.correlation_similarity }}</strong></div>
+                    <div><span>Duplicate rate</span><strong>{{ quality_metrics.duplicate_rate }}</strong></div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Privacy Dashboard</h2>
+                <p class="privacy-level {{ privacy_level|lower }}">{{ privacy_level }}</p>
+                <p class="hint">{{ privacy_explanation }}</p>
+                <p class="hint">Prototype epsilon is simulated from your slider. Formal DP requires a privacy-accounted trainer.</p>
+            </div>
+        </section>
+
+        <section class="score-strip">
+            <div>
+                <span>Real {{ metric_name }}</span>
+                <strong>{{ real_acc }}</strong>
+            </div>
+            <div>
+                <span>Synthetic {{ metric_name }}</span>
+                <strong>{{ syn_acc }}</strong>
+            </div>
+        </section>
+
+        {% if margin_report %}
+        <section class="audit-section">
+            <h2>Clinical Margin Audit</h2>
+            <div class="audit-grid">
+                {% for item in margin_report %}
+                    <div class="{% if item.passed %}pass{% else %}fail{% endif %}">
+                        <span>{{ item.column }}</span>
+                        <strong>{{ item.max_diff }}</strong>
+                        <small>Allowed {{ item.allowed }} | Avg {{ item.avg_diff }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <section class="visual-report">
+            <div class="section-title-row">
+                <h2>Real vs Synthetic Comparison Dashboard</h2>
+                <select id="distributionColumn"></select>
+            </div>
+            <div id="lineChart" class="plot-box"></div>
+        </section>
+
+        <section class="visual-report">
+            <div class="section-title-row">
+                <h2>Correlation Heatmaps</h2>
+                <select id="heatmapToggle">
+                    <option value="real">Real data</option>
+                    <option value="synthetic">Synthetic data</option>
+                </select>
+            </div>
+            <div id="heatmapChart" class="plot-box"></div>
+        </section>
+
+        <section class="table-section">
+            <h2>Mean / Median / Std Per Column</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Real mean</th>
+                        <th>Synthetic mean</th>
+                        <th>Real median</th>
+                        <th>Synthetic median</th>
+                        <th>Real std</th>
+                        <th>Synthetic std</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in stats_rows %}
+                        <tr>
+                            <td>{{ row.column }}</td>
+                            <td>{{ row.real_mean }}</td>
+                            <td>{{ row.syn_mean }}</td>
+                            <td>{{ row.real_median }}</td>
+                            <td>{{ row.syn_median }}</td>
+                            <td>{{ row.real_std }}</td>
+                            <td>{{ row.syn_std }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="audit-section">
+            <h2>Medical Consistency Checks</h2>
+            <div class="audit-grid">
+                {% for check in medical_checks %}
+                    <div>
+                        <span>{{ check.status }}</span>
+                        <strong>{{ check.name }}</strong>
+                        <small>{{ check.detail }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="chat-panel">
+            <h2>Assistant</h2>
+            <div id="chatMessages" class="chat-messages">
+                <div class="assistant-msg">Ask me about reliability, epsilon, KL/KS scores, or why a value is bounded.</div>
+            </div>
+            <form id="chatForm" class="chat-form">
+                <input id="chatQuestion" type="text" placeholder="Is this synthetic data reliable?">
+                <button type="submit">Ask</button>
+            </form>
+        </section>
+
+        <section class="table-section">
+            <h2>Synthetic Preview</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        {% for column in preview_columns %}
+                            <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in preview_rows %}
+                        <tr>
+                            {% for column in preview_columns %}
+                                <td>{{ row[column] }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <script>
+        const chartPayload = {{ chart_payload|safe }};
+        const distributionSelect = document.getElementById("distributionColumn");
+        const heatmapToggle = document.getElementById("heatmapToggle");
+
+        const lineColumns = chartPayload.line.columns || [];
+        lineColumns.forEach((column) => {
+            const option = document.createElement("option");
+            option.value = column;
+            option.textContent = column;
+            distributionSelect.appendChild(option);
+        });
+
+        function drawLine(column) {
+            const data = chartPayload.line.series[column];
+            if (!data) return;
+            Plotly.newPlot("lineChart", [
+                { x: data.x, y: data.real, type: "scatter", mode: "lines+markers", name: "Real", line: { color: "#2563eb", width: 3 } },
+                { x: data.x, y: data.synthetic, type: "scatter", mode: "lines+markers", name: "Synthetic", line: { color: "#f97316", width: 3 } }
+            ], {
+                margin: { t: 24, r: 20, b: 48, l: 48 },
+                xaxis: { title: column },
+                yaxis: { title: "Density" },
+                legend: { orientation: "h" }
+            }, { responsive: true });
+        }
+
+        function drawHeatmap(kind) {
+            const payload = kind === "real" ? chartPayload.realCorr : chartPayload.syntheticCorr;
+            Plotly.newPlot("heatmapChart", [{
+                z: payload.z,
+                x: payload.columns,
+                y: payload.columns,
+                type: "heatmap",
+                colorscale: "RdBu",
+                zmin: -1,
+                zmax: 1
+            }], {
+                margin: { t: 20, r: 20, b: 90, l: 90 }
+            }, { responsive: true });
+        }
+
+        if (lineColumns.length) {
+            drawLine(lineColumns[0]);
+            distributionSelect.addEventListener("change", () => drawLine(distributionSelect.value));
+        }
+        drawHeatmap("real");
+        heatmapToggle.addEventListener("change", () => drawHeatmap(heatmapToggle.value));
+
+        document.getElementById("chatForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const input = document.getElementById("chatQuestion");
+            const messages = document.getElementById("chatMessages");
+            const question = input.value.trim();
+            if (!question) return;
+
+            messages.insertAdjacentHTML("beforeend", `<div class="user-msg">${question}</div>`);
+            input.value = "";
+            const response = await fetch("/assistant", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question })
+            });
+            const data = await response.json();
+            messages.insertAdjacentHTML("beforeend", `<div class="assistant-msg">${data.answer}</div>`);
+            messages.scrollTop = messages.scrollHeight;
+        });
+    </script>
+</body>
+</html>

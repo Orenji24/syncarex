@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synthetic Healthcare Data Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <main class="shell">
+        <nav class="site-nav">
+            <a class="brand" href="/">SynCare Lab</a>
+            <div>
+                <a href="/methodology">Methodology</a>
+                <a href="/privacy">Privacy</a>
+                <a href="/guide">Guide</a>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div>
+                <p class="eyebrow">Privacy-preserving EHR synthesis</p>
+                <h1>Synthetic Healthcare Data Generator</h1>
+                <p class="lede">
+                    Upload a healthcare CSV and generate a synthetic version with preserved
+                    distributions, bounded clinical value variation, utility checks, and visual comparison.
+                </p>
+            </div>
+            <div class="status-panel">
+                <span class="status-dot"></span>
+                <strong>Local Flask pipeline</strong>
+                <p>CSV in, synthetic CSV and distribution report out.</p>
+            </div>
+        </section>
+
+        <section class="workspace">
+            <form class="upload-card" action="/generate" method="post" enctype="multipart/form-data">
+                <label for="file">Healthcare CSV</label>
+                <input id="file" type="file" name="file" accept=".csv" required>
+                <div class="control-panel">
+                    <h2>Controls</h2>
+
+                    <label for="epochs">Epochs <output id="epochsValue">300</output></label>
+                    <input id="epochs" type="range" name="epochs" min="100" max="1000" step="100" value="300">
+
+                    <label for="noise_level">Noise level <output id="noiseValue">0.5</output></label>
+                    <input id="noise_level" type="range" name="noise_level" min="0" max="1" step="0.1" value="0.5">
+
+                    <label for="epsilon">Privacy epsilon <output id="epsilonValue">1.0</output></label>
+                    <input id="epsilon" type="range" name="epsilon" min="0.1" max="10" step="0.1" value="1.0">
+
+                    <label for="sample_size">Sample size</label>
+                    <input id="sample_size" type="number" name="sample_size" min="1" placeholder="Same as uploaded rows">
+                </div>
+                <button type="submit">Generate Synthetic Data</button>
+                <p class="hint">Expected columns can include age, BP/blood pressure, cholesterol, diagnosis, outcome, or any tabular EHR fields.</p>
+            </form>
+
+            <div class="feature-panel">
+                <h2>What the report includes</h2>
+                <div class="feature-list">
+                    <div><strong>Distribution chart</strong><span>Real and synthetic numeric fields compared side by side.</span></div>
+                    <div><strong>Utility score</strong><span>Model comparison when a target, label, outcome, diagnosis, or disease column exists.</span></div>
+                    <div><strong>Margin audit</strong><span>Checks whether protected clinical columns stayed within requested row-level limits.</span></div>
+                    <div><strong>Preview and export</strong><span>Review generated rows before downloading the synthetic CSV.</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="insight-grid">
+            <article>
+                <h2>Structured EHR Data</h2>
+                <p>Works with mixed numeric and categorical CSV columns using SDV metadata detection.</p>
+            </article>
+            <article>
+                <h2>Fresh Every Run</h2>
+                <p>Each upload creates unique graph and CSV files so browser caching does not hide new results.</p>
+            </article>
+            <article>
+                <h2>Project Ready</h2>
+                <p>The app separates generation, privacy notes, methodology, results, and downloads.</p>
+            </article>
+        </section>
+    </main>
+    <script>
+        const bindRange = (id, outputId) => {
+            const input = document.getElementById(id);
+            const output = document.getElementById(outputId);
+            input.addEventListener("input", () => output.value = input.value);
+        };
+        bindRange("epochs", "epochsValue");
+        bindRange("noise_level", "noiseValue");
+        bindRange("epsilon", "epsilonValue");
+    </script>
+</body>
+</html>

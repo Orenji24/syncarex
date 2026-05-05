@@ -1,0 +1,16 @@
+Patient_ID,Age,Gender,Blood_Pressure,Cholesterol_Level,Blood_Sugar,Heart_Rate,Condition,Medication
+P001,29,M,120/80,180,90,72,Healthy,None
+P002,45,F,140/90,220,110,85,Hypertension,Amlodipine
+P003,60,M,150/95,250,140,88,Diabetes,Metformin
+P004,33,F,118/76,170,85,70,Healthy,None
+P005,52,M,160/100,260,150,92,Hypertension,Lisinopril
+P006,41,F,135/88,210,105,80,Pre-diabetes,Metformin
+P007,67,M,145/92,240,130,86,Heart Disease,Aspirin
+P008,25,F,110/70,160,80,68,Healthy,None
+P009,38,M,130/85,200,95,75,Pre-diabetes,Metformin
+P010,55,F,155/98,270,160,90,Diabetes,Insulin
+P011,48,M,142/89,230,120,83,Hypertension,Atenolol
+P012,31,F,115/75,175,88,69,Healthy,None
+P013,70,M,165/105,280,170,95,Heart Disease,Aspirin
+P014,44,F,138/86,215,100,78,Pre-diabetes,Metformin
+P015,58,M,158/97,265,155,89,Diabetes,Insulin

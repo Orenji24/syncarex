@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide | SynCare Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <main class="shell">
+        <nav class="site-nav">
+            <a class="brand" href="/">SynCare Lab</a>
+            <div>
+                <a href="/methodology">Methodology</a>
+                <a href="/privacy">Privacy</a>
+                <a href="/guide">Guide</a>
+            </div>
+        </nav>
+
+        <section class="page-head">
+            <p class="eyebrow">CSV guide</p>
+            <h1>Preparing Input Data</h1>
+            <p class="lede">Use clean column names and include a target-like field if you want the app to calculate model utility.</p>
+        </section>
+
+        <section class="guide-list">
+            <div><strong>Supported file</strong><span>Upload a single .csv file.</span></div>
+            <div><strong>Utility target names</strong><span>target, label, outcome, diagnosis, or disease.</span></div>
+            <div><strong>Recognized bounded columns</strong><span>age, bp, blood_pressure, cholesterol, and cholestrol.</span></div>
+            <div><strong>Best practice</strong><span>Remove direct identifiers like name, phone, email, address, and medical record number before upload.</span></div>
+        </section>
+    </main>
+</body>
+</html>

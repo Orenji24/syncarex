@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy | SynCare Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <main class="shell">
+        <nav class="site-nav">
+            <a class="brand" href="/">SynCare Lab</a>
+            <div>
+                <a href="/methodology">Methodology</a>
+                <a href="/privacy">Privacy</a>
+                <a href="/guide">Guide</a>
+            </div>
+        </nav>
+
+        <section class="page-head">
+            <p class="eyebrow">Privacy status</p>
+            <h1>Current Guarantees And Next Upgrade</h1>
+            <p class="lede">This prototype reduces direct copying through synthetic generation and exact-match checks. A formal epsilon guarantee requires DP training, such as DP-SGD or PATE-style synthesis.</p>
+        </section>
+
+        <section class="insight-grid">
+            <article><h2>Implemented</h2><p>Unique outputs, exact row match risk, clinical margin audit, and no static placeholder accuracy.</p></article>
+            <article><h2>Needed For Formal DP</h2><p>Train the generator with a privacy accountant and report epsilon/delta from the actual mechanism.</p></article>
+            <article><h2>Recommended Attack Tests</h2><p>Membership inference, nearest-neighbor distance, attribute inference, and duplicate row analysis.</p></article>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Methodology | SynCare Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <main class="shell">
+        <nav class="site-nav">
+            <a class="brand" href="/">SynCare Lab</a>
+            <div>
+                <a href="/methodology">Methodology</a>
+                <a href="/privacy">Privacy</a>
+                <a href="/guide">Guide</a>
+            </div>
+        </nav>
+
+        <section class="page-head">
+            <p class="eyebrow">Pipeline</p>
+            <h1>How Synthetic Data Is Generated</h1>
+            <p class="lede">The app detects CSV metadata, trains a CTGAN tabular synthesizer, generates new rows, applies row-level clinical margin controls, and builds a validation report.</p>
+        </section>
+
+        <section class="timeline">
+            <div><span>1</span><strong>Upload</strong><p>CSV data is stored with a unique run ID.</p></div>
+            <div><span>2</span><strong>Metadata</strong><p>Column types are detected by SDV.</p></div>
+            <div><span>3</span><strong>Synthesis</strong><p>CTGAN learns the table structure and samples new records.</p></div>
+            <div><span>4</span><strong>Validation</strong><p>Plots, utility scores, exact-match risk, and margin checks are returned.</p></div>
+        </section>
+    </main>
+</body>
+</html>
