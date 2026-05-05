@@ -3,128 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synthetic Healthcare Data Generator</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>SynCareX | Synthetic Healthcare Data Generator</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <main class="shell">
-        <nav class="site-nav">
-            <a class="brand" href="/">SynCare Lab</a>
+        <nav class="nav">
+            <a class="brand" href="#">SynCareX</a>
             <div>
-                <a href="/methodology">Methodology</a>
-                <a href="/privacy">Privacy</a>
-                <a href="/guide">Guide</a>
+                <a href="#methodology">Methodology</a>
+                <a href="#privacy">Privacy</a>
+                <a href="#features">Features</a>
+                <a href="#run">Run Project</a>
             </div>
         </nav>
 
         <section class="hero">
+            <p class="eyebrow">Privacy-preserving healthcare AI</p>
+            <h1>Synthetic Healthcare Data Generator</h1>
+            <p class="lede">
+                A Flask-based research tool that generates synthetic healthcare CSV data,
+                applies clinical consistency rules, and compares real vs synthetic datasets
+                using statistical, privacy, and medical-quality metrics.
+            </p>
+            <div class="hero-actions">
+                <a class="primary" href="#run">How to run</a>
+                <a class="secondary" href="#methodology">View methodology</a>
+            </div>
+        </section>
+
+        <section class="metrics">
+            <div><span>Generator</span><strong>CTGAN</strong></div>
+            <div><span>Backend</span><strong>Flask</strong></div>
+            <div><span>Charts</span><strong>Plotly</strong></div>
+            <div><span>Privacy</span><strong>Epsilon Panel</strong></div>
+        </section>
+
+        <section id="features" class="section">
+            <div class="section-head">
+                <p class="eyebrow">Dashboard</p>
+                <h2>What the project does</h2>
+            </div>
+            <div class="grid">
+                <article>
+                    <h3>CSV Upload</h3>
+                    <p>Users upload structured healthcare records such as age, gender, medication, BP, glucose, cholesterol, and diagnosis fields.</p>
+                </article>
+                <article>
+                    <h3>Synthetic Generation</h3>
+                    <p>SDV CTGAN learns tabular patterns and creates new synthetic records for research and model prototyping.</p>
+                </article>
+                <article>
+                    <h3>Clinical Rules</h3>
+                    <p>Heart rate, blood pressure, and blood sugar follow source trends. Gender and medication are preserved when present.</p>
+                </article>
+                <article>
+                    <h3>Condition Logic</h3>
+                    <p>Condition is generated from clinical thresholds: BP above 120/80 gives hypertension, sugar above 140 gives diabetes.</p>
+                </article>
+                <article>
+                    <h3>Quality Metrics</h3>
+                    <p>The app reports KL divergence, KS score, duplicate rate, correlation similarity, and real-vs-synthetic profile charts.</p>
+                </article>
+                <article>
+                    <h3>Research Report</h3>
+                    <p>A built-in report page summarizes dataset structure, model method, privacy explanation, and evaluation results.</p>
+                </article>
+            </div>
+        </section>
+
+        <section id="methodology" class="section split">
             <div>
-                <p class="eyebrow">Privacy-preserving EHR synthesis</p>
-                <h1>Synthetic Healthcare Data Generator</h1>
-                <p class="lede">
-                    Upload a healthcare CSV and generate a synthetic version with preserved
-                    distributions, bounded clinical value variation, utility checks, and visual comparison.
-                </p>
+                <p class="eyebrow">Methodology</p>
+                <h2>Pipeline overview</h2>
             </div>
-            <div class="status-panel">
-                <span class="status-dot"></span>
-                <strong>Local Flask pipeline</strong>
-                <p>CSV in, synthetic CSV and distribution report out.</p>
+            <div class="steps">
+                <div><span>01</span><p>Upload CSV and detect column metadata using SDV.</p></div>
+                <div><span>02</span><p>Train CTGAN on structured healthcare records.</p></div>
+                <div><span>03</span><p>Generate synthetic rows and apply medical consistency rules.</p></div>
+                <div><span>04</span><p>Evaluate statistical similarity, privacy risk, and clinical validity.</p></div>
             </div>
         </section>
 
-        <section class="workspace">
-            <form class="upload-card" action="/generate" method="post" enctype="multipart/form-data">
-                <label for="file">Healthcare CSV</label>
-                <input id="file" type="file" name="file" accept=".csv" required>
-                <div class="control-panel">
-                    <h2>Controls</h2>
-
-                    <label for="epochs">Epochs <output id="epochsValue">100</output></label>
-                    <input id="epochs" type="range" name="epochs" min="100" max="1000" step="100" value="100">
-
-                    <label for="noise_level">Noise level <output id="noiseValue">0.5</output></label>
-                    <input id="noise_level" type="range" name="noise_level" min="0" max="1" step="0.1" value="0.5">
-
-                    <label for="epsilon">Privacy epsilon <output id="epsilonValue">1.0</output></label>
-                    <input id="epsilon" type="range" name="epsilon" min="0.1" max="10" step="0.1" value="1.0">
-
-                    <label for="sample_size">Sample size</label>
-                    <input id="sample_size" type="number" name="sample_size" min="1" placeholder="Same as uploaded rows">
-                </div>
-                <button type="submit">Generate Synthetic Data</button>
-                <p class="hint">Expected columns can include age, BP/blood pressure, cholesterol, diagnosis, outcome, or any tabular EHR fields.</p>
-                <p class="hint">For a quick examiner demo, keep epochs at 100. Increase epochs later when you want a slower, higher-effort generation run.</p>
-            </form>
-
-            <div class="feature-panel">
-                <h2>What the report includes</h2>
-                <div class="feature-list">
-                    <div><strong>Distribution chart</strong><span>Real and synthetic numeric fields compared side by side.</span></div>
-                    <div><strong>Utility score</strong><span>Model comparison when a target, label, outcome, diagnosis, or disease column exists.</span></div>
-                    <div><strong>Margin audit</strong><span>Checks whether protected clinical columns stayed within requested row-level limits.</span></div>
-                    <div><strong>Preview and export</strong><span>Review generated rows before downloading the synthetic CSV.</span></div>
-                </div>
+        <section id="privacy" class="section split">
+            <div>
+                <p class="eyebrow">Privacy</p>
+                <h2>Privacy explanation</h2>
             </div>
+            <p class="copy">
+                The dashboard includes an epsilon privacy panel, duplicate-rate check, and exact-match risk score.
+                Lower epsilon indicates stronger privacy and usually lower similarity. In this prototype, epsilon is
+                simulated for explanation; formal Differential Privacy would require DP-SGD or another privacy-accounted method.
+            </p>
         </section>
 
-        <section class="insight-grid">
-            <article>
-                <h2>Structured EHR Data</h2>
-                <p>Works with mixed numeric and categorical CSV columns using SDV metadata detection.</p>
-            </article>
-            <article>
-                <h2>Fresh Every Run</h2>
-                <p>Each upload creates unique graph and CSV files so browser caching does not hide new results.</p>
-            </article>
-        </section>
-
-        <section class="examiner-section">
-            <div class="section-kicker">Examiner overview</div>
-            <h2>Methodology and privacy in one view</h2>
-            <div class="examiner-grid">
-                <article>
-                    <span>01</span>
-                    <h3>Upload and schema detection</h3>
-                    <p>The system accepts structured healthcare CSV files and automatically detects numeric and categorical columns using SDV metadata.</p>
-                </article>
-                <article>
-                    <span>02</span>
-                    <h3>Generative model</h3>
-                    <p>CTGAN learns the statistical structure of the table and samples new synthetic records for research and model prototyping.</p>
-                </article>
-                <article>
-                    <span>03</span>
-                    <h3>Medical constraints</h3>
-                    <p>Age, blood pressure, and cholesterol are bounded row-by-row. Gender and medication are preserved exactly when those columns exist.</p>
-                </article>
-                <article>
-                    <span>04</span>
-                    <h3>Privacy layer</h3>
-                    <p>The dashboard reports epsilon, privacy level, exact-match risk, duplicate rate, and explains that lower epsilon means stronger privacy.</p>
-                </article>
-                <article>
-                    <span>05</span>
-                    <h3>Quality evaluation</h3>
-                    <p>KL divergence, KS score, correlation similarity, heatmaps, and real-vs-synthetic profile graphs show how closely patterns are preserved.</p>
-                </article>
-                <article>
-                    <span>06</span>
-                    <h3>Research output</h3>
-                    <p>The app generates a downloadable synthetic CSV, dashboard metrics, medical checks, and a research report suitable for project explanation.</p>
-                </article>
-            </div>
+        <section id="run" class="section run-card">
+            <p class="eyebrow">Run the app</p>
+            <h2>Important GitHub note</h2>
+            <p>
+                GitHub Pages can show this project website, but it cannot run the Flask backend, CSV uploads,
+                CTGAN generation, or Python model code. To use the real generator, run locally or deploy on Render,
+                Railway, PythonAnywhere, or Hugging Face Spaces.
+            </p>
+            <pre><code>python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python app.py</code></pre>
         </section>
     </main>
-    <script>
-        const bindRange = (id, outputId) => {
-            const input = document.getElementById(id);
-            const output = document.getElementById(outputId);
-            input.addEventListener("input", () => output.value = input.value);
-        };
-        bindRange("epochs", "epochsValue");
-        bindRange("noise_level", "noiseValue");
-        bindRange("epsilon", "epsilonValue");
-    </script>
 </body>
 </html>
